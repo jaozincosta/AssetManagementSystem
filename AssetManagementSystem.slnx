@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="AssetManagementSystem.Application/AssetManagementSystem.Application.csproj" />
+  <Project Path="AssetManagementSystem.Domain/AssetManagementSystem.Domain.csproj" />
+  <Project Path="AssetManagementSystem.Infrastructure/AssetManagementSystem.Infrastructure.csproj" />
+  <Project Path="AssetManagementSystem.Tests/AssetManagementSystem.Tests.csproj" Id="cc4ed533-0ce0-404b-9c92-9a7ca07869da" />
+  <Project Path="AssetManagementSystem.Web/AssetManagementSystem.Web.csproj" Id="aa3fed32-4670-406e-a1ac-edede8a10c3f" />
+  <Project Path="AssetManagementSystem/AssetManagementSystem.csproj" />
+</Solution>

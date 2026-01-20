@@ -1,0 +1,47 @@
+﻿@page "/"
+
+<PageTitle>Asset Management System</PageTitle>
+
+<div class="text-center">
+    <h1>🖥️ Asset Management System</h1>
+    <p class="lead">Sistema de Gerenciamento de Ativos de TI</p>
+
+    <hr />
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h2>👥</h2>
+                    <h5 class="card-title">Usuários</h5>
+                    <p class="card-text">Cadastre e gerencie os colaboradores que receberão os ativos.</p>
+                    <a href="users" class="btn btn-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h2>💻</h2>
+                    <h5 class="card-title">Ativos</h5>
+                    <p class="card-text">Cadastre notebooks, monitores e periféricos da empresa.</p>
+                    <a href="assets" class="btn btn-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h2>📋</h2>
+                    <h5 class="card-title">Alocações</h5>
+                    <p class="card-text">Registre a entrega e devolução de ativos aos colaboradores.</p>
+                    <a href="allocations" class="btn btn-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <strong>💡 IMPORANTE: </strong> O sistema não permite alocar um equipamento que já esteja "Em Uso" ou "Em Manutenção".
+    </div>
+</div>

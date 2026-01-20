@@ -1,0 +1,74 @@
+﻿@inherits LayoutComponentBase
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asset Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background-color: #212529;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: 12px 20px;
+            font-size: 1rem;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        .sidebar-header {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 10px 20px 30px 20px;
+            border-bottom: 1px solid #343a40;
+            margin-bottom: 10px;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            🖥️ Asset Management
+        </div>
+        <nav class="nav flex-column">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                🏠 Início
+            </NavLink>
+            <NavLink class="nav-link" href="users">
+                👥 Usuários
+            </NavLink>
+            <NavLink class="nav-link" href="assets">
+                💻 Ativos
+            </NavLink>
+            <NavLink class="nav-link" href="allocations">
+                📋 Alocações
+            </NavLink>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        @Body
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

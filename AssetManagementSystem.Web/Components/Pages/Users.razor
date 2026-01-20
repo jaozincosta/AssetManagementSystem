@@ -1,0 +1,237 @@
+﻿@page "/users"
+@rendermode InteractiveServer
+@inject UserService UserService
+
+<PageTitle>Usuários</PageTitle>
+
+<h1>👥 Usuários</h1>
+
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="ShowCreateForm">
+        ➕ Novo Usuário
+    </button>
+</div>
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div class="alert @statusClass alert-dismissible fade show" role="alert">
+        @statusMessage
+        <button type="button" class="btn-close" @onclick="() => statusMessage = null"></button>
+    </div>
+}
+
+@if (showForm)
+{
+    <div class="card mb-4">
+        <div class="card-header">
+            @(isEditing ? "✏️ Editar Usuário" : "➕ Novo Usuário")
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Nome</label>
+                <input type="text" class="form-control" @bind="formDto.Name" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input type="email" class="form-control" @bind="formDto.Email" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Departamento</label>
+                <input type="text" class="form-control" @bind="formDto.Department" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
+
+            <button class="btn btn-success" @onclick="SaveUser">💾 Salvar</button>
+            <button class="btn btn-secondary" @onclick="CancelForm">Cancelar</button>
+        </div>
+    </div>
+}
+
+@if (users == null)
+{
+    <p>Carregando...</p>
+}
+else if (!users.Any())
+{
+    <div class="alert alert-info">Nenhum usuário cadastrado.</div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Departamento</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>@user.Department</td>
+                    <td>
+                        @if (user.IsActive)
+                        {
+                            <span class="badge bg-success">Ativo</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inativo</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" @onclick="() => EditUser(user)" title="Editar">✏️</button>
+
+                        @if (user.IsActive)
+                        {
+                            <button class="btn btn-sm btn-secondary" @onclick="() => ToggleActive(user.Id)" title="Inativar">🚫</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-success" @onclick="() => ToggleActive(user.Id)" title="Ativar">✅</button>
+                        }
+
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user.Id)" title="Excluir">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<UserDto>? users;
+    private CreateUserDto formDto = new();
+    private bool showForm = false;
+    private bool isEditing = false;
+    private int editingId = 0;
+    private string? errorMessage;
+    private string? statusMessage;
+    private string statusClass = "alert-info";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        users = await UserService.GetAllAsync();
+    }
+
+    private void ShowCreateForm()
+    {
+        formDto = new CreateUserDto();
+        isEditing = false;
+        showForm = true;
+        errorMessage = null;
+        statusMessage = null;
+    }
+
+    private void EditUser(UserDto user)
+    {
+        formDto = new CreateUserDto
+        {
+            Name = user.Name,
+            Email = user.Email,
+            Department = user.Department
+        };
+        editingId = user.Id;
+        isEditing = true;
+        showForm = true;
+        errorMessage = null;
+        statusMessage = null;
+    }
+
+    private void CancelForm()
+    {
+        showForm = false;
+        errorMessage = null;
+    }
+
+    private async Task SaveUser()
+    {
+        try
+        {
+            HttpResponseMessage response;
+
+            if (isEditing)
+            {
+                response = await UserService.UpdateAsync(editingId, formDto);
+            }
+            else
+            {
+                response = await UserService.CreateAsync(formDto);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                showForm = false;
+                await LoadUsers();
+                ShowStatus(isEditing ? "Usuário atualizado com sucesso!" : "Usuário criado com sucesso!", true);
+            }
+            else
+            {
+                var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                errorMessage = error?.Message ?? "Erro ao salvar usuário.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task DeleteUser(int id)
+    {
+        var response = await UserService.DeleteAsync(id);
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadUsers();
+            ShowStatus("Usuário excluído com sucesso!", true);
+        }
+        else
+        {
+            var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            ShowStatus(error?.Message ?? "Erro ao excluir usuário.", false);
+        }
+    }
+
+    private async Task ToggleActive(int id)
+    {
+        var response = await UserService.ToggleActiveAsync(id);
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadUsers();
+            ShowStatus("Status do usuário alterado com sucesso!", true);
+        }
+        else
+        {
+            var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            ShowStatus(error?.Message ?? "Erro ao alterar status do usuário.", false);
+        }
+    }
+
+    private void ShowStatus(string message, bool success)
+    {
+        statusMessage = message;
+        statusClass = success ? "alert-success" : "alert-danger";
+        StateHasChanged();
+    }
+
+    private class ErrorResponse
+    {
+        public string? Message { get; set; }
+    }
+}
